@@ -1,0 +1,54 @@
+.progress-bar {
+    width: 0;
+    animation: progress-bar-stripes .5s linear infinite;
+} 
+
+.active::before {
+    font-family: arial;
+    content: ".";
+    display: block;
+    background:black;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 10%;
+    height: auto;
+    text-align: center;
+    color: white;
+    margin: 1%;
+}
+
+.active {
+    border: 5px solid black;
+}
+
+.active::after {
+    font-family: arial;
+    content: "L";
+    display: inline-block;
+    -ms-transform: scaleX(-1) rotate(-35deg); /* IE 9 */
+    -webkit-transform: scaleX(-1) rotate(-35deg); /* Chrome, Safari, Opera */
+    transform: scaleX(-1) rotate(-35deg);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 10%;
+    height: auto;
+    text-align: center;
+    color: white;
+    margin: 1%;
+}
+.bg-light {
+    background-color: #f2f2f2!important;
+}
+.bg-gray {
+    background-color: lightgray !important;
+}
+@keyframes progress {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+} 

@@ -7,42 +7,86 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.css">
+    <link rel="stylesheet" href="./css/index.css">
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
+
 </head>
-<body x-data="data()">
-    <template  x-for="(q_obj,index) in qtns" >
-        <divx-for  class="row p-2">
-            <p class="col-12" x-text="(index+1)+'. '+q_obj.qtn"></p> 
-            <template x-for="optn in q_obj.options">
-                <div class="col">
-                    <p x-text="Object.keys(optn) +' : '+ Object.values(optn)"></p>
+
+
+<body x-data="data()" x-init="init()">
+        <div>
+            <!-- <input id="ex13" type="text" data-slider-ticks="[0, 100, 200, 300, 400]" data-slider-ticks-snap-bounds="30" data-slider-ticks-labels='["$0", "$100", "$200", "$300", "$400"]'/> -->
+            <input id="ex21" type="text"
+            data-provide="slider"
+            data-slider-ticks="[1, 2, 3]"
+            data-slider-ticks-labels='["short", "medium", "long"]'
+            data-slider-min="1"
+            data-slider-max="3"
+            data-slider-step="1"
+            data-slider-value="3"
+            data-slider-tooltip="hide" />
+
+            <div class="container-md text-center bg-light align-middle">
+                <p class=" font-weight-normal p-1 m-0" x-text="qtns[q_pos].qtn"></p>  <!-- (q_pos+1)+'. '+ -->
+            </div>
+            <div class="container-md text-center">
+                <p class="font-weight-light p-1 m-0" x-text="qtns[q_pos].selection_text"></p> 
+            </div>
+            <div class="container mb-4">
+                <div class="row p-2">
+                    <template x-for="(optn, index) in qtns[q_pos].options" :key="index">
+                        <div :class="(qtns[q_pos].options.length > 3)?'col-6':'col-12 col-md-6'" class=" p-1">                
+                        <template x-if="qtns[q_pos].type == 'image'">
+                            <div :class="(temp_answer[index] == Object.keys(optn))?'active':'aa'">
+                                <!-- <p x-text="Object.keys(optn) +' : '+ Object.values(optn)"></p> -->
+                                <img class="w-100" :src="Object.values(optn)" @click="capture_answer(Object.keys(optn)[0],index)" alt="abc">
+                            </div>
+                        </template>
+                        <template x-if="qtns[q_pos].type == 'checkbox'">
+                            <div class=" p-1">
+                                <input type="checkbox" :id="Object.keys(optn)" :name="Object.keys(optn)" @click="capture_answer(Object.keys(optn)[0],index)" value="Bike">
+                                <label :for="Object.keys(optn)"  x-text="Object.values(optn)"> </label><br>
+                            </div>
+                        </template>
+                        </div>
+                    </template>
                 </div>
-            </template>
-            <hr/>       
-        </divx-for> 
-    </template>
+            </div>   
+        </div> 
+        <footer id="footer" class="row d-flex align-items-center p-2 fixed-bottom bg-light">
+            <div class="col">
+                <div class="progress bg-gray">
+                    <div id="progress-bar"  class="progress-bar bg-dark progress-bar-striped progress-bar-animated"></div>
+                </div>
+                <div> <span x-text="progress_per"></span>% completed</div>
+
+            </div>
+            <div class="col">
+                <span class="p-2 float-right" @click="incr()">
+                    <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.793 8 8.146 5.354a.5.5 0 0 1 0-.708z"/>
+                        <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5H11a.5.5 0 0 1 0 1H4.5A.5.5 0 0 1 4 8z"/>
+                      </svg>
+                </span>
+                <span class="p-2 float-right" @click="decr()"> 
+                    <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M7.854 4.646a.5.5 0 0 1 0 .708L5.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
+                        <path fill-rule="evenodd" d="M4.5 8a.5.5 0 0 1 .5-.5h6.5a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"/>
+                      </svg>
+                </span>
+            </div>
+        </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.js" ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+    <script src="./js/index.js"></script>
 </body>
 </html>
-<script>
-    data = () => {
-        return {
-            qtns: [
-               {
-                   qtn:"do you this this is a question to be answered ?",
-                   options: [{a:'one'}, {b:'two'}]
-               },
-               {
-                   qtn:"The first question is illogical to you?",
-                   options: [{a:'one'}, {b:'two'}]
-               }
-            ]
-        }
-    }
-    
-</script>
+<!--  ** reference **  -->
+<!-- slider bar
+https://seiyria.com/bootstrap-slider/ -->
